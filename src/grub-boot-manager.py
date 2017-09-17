@@ -4,11 +4,11 @@ from gi.repository import Gtk, Gdk
 import subprocess
 import re
 
-f = open("/usr/sbin/grub-install", "r").read()
-grub_version = re.findall("PACKAGE_VERSION=(.*)", f)[0]
+f = subprocess.check_output(["grub-install", "--version"])
+grub_version = f.split()[-1]
 
 f = open("/boot/grub/grub.cfg", "r").read()
-grub_menu_entries = re.findall("menuentry [\"'](.*)[\"']", f)
+grub_menu_entries = re.findall("menuentry '(.*?)'", f)
 
 #for line in open("/boot/grub/grubenv", "r").xreadlines():
 #	if re.search('^saved_entry', line):
