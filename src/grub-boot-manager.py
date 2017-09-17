@@ -3,6 +3,8 @@
 from gi.repository import Gtk, Gdk
 import subprocess
 import re
+import os
+import sys
 
 f = subprocess.check_output(["grub-install", "--version"])
 grub_version = f.split()[-1]
@@ -122,7 +124,7 @@ class GrubBootManager:
         return True
 
     def grub_set_default(self, *args):
-        subprocess.Popen(['echo', 'grub-set-default', self.grub_menu_entry])
+        subprocess.Popen(['gksu', 'grub-set-default', self.grub_menu_entry])
 
         self.hide_dialog_default()
 
@@ -136,8 +138,8 @@ class GrubBootManager:
         return True
 
     def grub_reboot(self, *args):
-        subprocess.Popen(['echo', 'grub-reboot', self.grub_menu_entry])
-        #subprocess.Popen(['echo', 'shutdown', '-r', 'now'])
+        subprocess.Popen(['gksu', 'grub-reboot', self.grub_menu_entry])
+        subprocess.Popen(['gksu', 'shutdown', '-r', 'now'])
 
         self.hide_dialog_reboot()
 
