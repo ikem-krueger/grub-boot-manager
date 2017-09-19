@@ -12,17 +12,6 @@ grub_version = f.split()[-1]
 f = open("/boot/grub/grub.cfg", "r").read()
 grub_menu_entries = re.findall("menuentry '(.*?)'", f)
 
-#for line in open("/boot/grub/grubenv", "r").xreadlines():
-#    if re.search('^saved_entry', line):
-#        saved_entry = line.split('=')[1]
-#        print "saved_entry:", saved_entry
-#
-#    if re.search('^prev_saved_entry', line):
-#        prev_saved_entry = line.split('=')[1]
-#        print "prev_saved_entry:", prev_saved_entry
-#
-#    #if 
-
 f = open("/boot/grub/grubenv", "r").read()
 grub_default = re.findall("saved_entry=(.*)", f)[0]
 
@@ -64,6 +53,7 @@ class GrubBootManager:
 
         self.entry_timeout = builder.get_object("entry_timeout")
         self.entry_timeout.set_text(str(grub_timeout))
+        self.entry_timeout.connect("activate", self.grub_set_timeout, grub_timeout)
 
         self.button_default = builder.get_object("button_default")
         self.button_default.connect("clicked", self.show_dialog_default)
@@ -100,13 +90,15 @@ class GrubBootManager:
         self.button_yes_reboot = builder.get_object("button_yes_reboot")
         self.button_yes_reboot.connect("clicked", self.grub_reboot)
 
-    #def _keyhandler(self, widget, event):
-    #    keyname = Gdk.keyval_name(event.keyval)            
-    #
-    #    print "Key %s (%d) was pressed" % (keyname, event.keyval)
-    #
-    #    if Gdk.keyval_name(event.keyval) == 'e':
-    #        self.show_dialog_edit()
+    '''
+    def _keyhandler(self, widget, event):
+        keyname = Gdk.keyval_name(event.keyval)            
+    
+        print "Key %s (%d) was pressed" % (keyname, event.keyval)
+    
+        if Gdk.keyval_name(event.keyval) == 'e':
+            self.show_dialog_edit()
+    '''
 
     def selection_changed(self, tree_selection):
         (model, pathlist) = tree_selection.get_selected_rows()
@@ -124,14 +116,16 @@ class GrubBootManager:
         return True
 
     def grub_set_default(self, *args):
-        subprocess.Popen(['gksu', 'grub-set-default', self.grub_menu_entry])
+        subprocess.Popen(["grub-set-default", self.grub_menu_entry])
         
         self.hide_dialog_default()
 
-    def grub_set_timeout(self, timeout, *args):
-        subprocess.Popen(["gksu, ""sed", "-E", "'s/GRUB_TIMEOUT=[0-9]+/GRUB_TIMEOUT=%s/'" % timeout, "/etc/default/grub"])
+    def grub_set_timeout(self, *args):
+        grub_timeout = self.entry_timeout.get_text()
         
-        subprocess.Popen(["gksu", "update-grub"])
+        subprocess.Popen(["sed", "-i", "-r", "s/GRUB_TIMEOUT=[0-9]+/GRUB_TIMEOUT=%s/" % grub_timeout, "/etc/default/grub"])
+        
+        subprocess.Popen(["update-grub"])
 
     def show_dialog_reboot(self, *args):
         self.label_reboot.set_text(self.grub_menu_entry)
@@ -143,8 +137,9 @@ class GrubBootManager:
         return True
 
     def grub_reboot(self, *args):
-        subprocess.Popen(['gksu', 'grub-reboot', self.grub_menu_entry])
-        subprocess.Popen(['gksu', 'shutdown', '-r', 'now'])
+        subprocess.Popen(["grub-reboot", self.grub_menu_entry])
+        
+        subprocess.Popen(["shutdown", "-r", "now"])
 
         self.hide_dialog_reboot()
 
@@ -160,6 +155,8 @@ class GrubBootManager:
         Gtk.main_quit()
 
 if __name__ == "__main__":
-    app = GrubBootManager()
-    Gtk.main()
-
+    if os.getuid() != 0:
+        os.execlp("gksu", "python", sys.argv[0])
+    else:
+        app = GrubBootManager()
+        Gtk.main()
