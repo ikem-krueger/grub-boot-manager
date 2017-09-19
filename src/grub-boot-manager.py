@@ -125,8 +125,13 @@ class GrubBootManager:
 
     def grub_set_default(self, *args):
         subprocess.Popen(['gksu', 'grub-set-default', self.grub_menu_entry])
-
+        
         self.hide_dialog_default()
+
+    def grub_set_timeout(self, timeout, *args):
+        subprocess.Popen(["gksu, ""sed", "-E", "'s/GRUB_TIMEOUT=[0-9]+/GRUB_TIMEOUT=%s/'" % timeout, "/etc/default/grub"])
+        
+        subprocess.Popen(["gksu", "update-grub"])
 
     def show_dialog_reboot(self, *args):
         self.label_reboot.set_text(self.grub_menu_entry)
