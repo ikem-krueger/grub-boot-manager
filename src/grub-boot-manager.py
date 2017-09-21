@@ -57,7 +57,7 @@ class GrubBootManager:
         self.entry_timeout.connect("activate", self.grub_set_timeout, self.grub_timeout)
 
         self.button_default = builder.get_object("button_default")
-        self.button_default.connect("clicked", self.show_dialog_default)
+        self.button_default.connect("clicked", self.grub_set_default)
 
         self.button_reboot = builder.get_object("button_reboot")
         self.button_reboot.connect("clicked", self.show_dialog_reboot)
