@@ -6,21 +6,20 @@ import re
 import os
 import sys
 
-# TODO: this stuff need to go to __init__()
-f = subprocess.check_output(["grub-install", "--version"])
-grub_version = f.split()[-1]
-
-f = open("/boot/grub/grub.cfg", "r").read()
-grub_menu_entries = re.findall("menuentry '(.*?)'", f)
-
-f = open("/boot/grub/grubenv", "r").read()
-grub_default = re.findall("saved_entry=(.*)", f)[0]
-
-f = open("/etc/default/grub", "r").read()
-grub_timeout = re.findall("GRUB_TIMEOUT=(.*)", f)[0]
-
 class GrubBootManager:
     def __init__(self):
+        output = subprocess.check_output(["grub-install", "--version"])
+        self.grub_version = output.split()[-1]
+
+        output = open("/boot/grub/grub.cfg", "r").read()
+        self.grub_menu_entries = re.findall("menuentry '(.*?)'", output)
+
+        output = open("/boot/grub/grubenv", "r").read()
+        self.grub_default = re.findall("saved_entry=(.*)", output)[0]
+
+        output = open("/etc/default/grub", "r").read()
+        self.grub_timeout = re.findall("GRUB_TIMEOUT=(.*)", output)[0]
+
         builder = Gtk.Builder()
         builder.add_from_file("grub-boot-manager.ui")
 
@@ -31,7 +30,7 @@ class GrubBootManager:
         self.window.show()
 
         self.label_version = builder.get_object("label_version")
-        self.label_version.set_text(self.label_version.get_text() + grub_version)
+        self.label_version.set_text(self.label_version.get_text() + self.grub_version)
 
         self.treeview = builder.get_object("treeview1")
         self.treeview.connect("row-activated", self.show_dialog_reboot)
@@ -45,16 +44,16 @@ class GrubBootManager:
         self.treeview_column.pack_start(self.cellrenderer, True)
         self.treeview_column.add_attribute(self.cellrenderer, "text", 0)
 
-        for entry in grub_menu_entries:
+        for entry in self.grub_menu_entries:
             self.liststore.append([entry])
 
         self.treeselection = self.treeview.get_selection()
         self.treeselection.connect("changed", self.selection_changed)
-        self.treeselection.select_path(grub_menu_entries.index(grub_default))
+        self.treeselection.select_path(self.grub_menu_entries.index(self.grub_default))
 
         self.entry_timeout = builder.get_object("entry_timeout")
-        self.entry_timeout.set_text(str(grub_timeout))
-        self.entry_timeout.connect("activate", self.grub_set_timeout, grub_timeout)
+        self.entry_timeout.set_text(str(self.grub_timeout))
+        self.entry_timeout.connect("activate", self.grub_set_timeout, self.grub_timeout)
 
         self.button_default = builder.get_object("button_default")
         self.button_default.connect("clicked", self.show_dialog_default)
@@ -122,10 +121,10 @@ class GrubBootManager:
         self.hide_dialog_default()
 
     def grub_set_timeout(self, *args):
-        grub_timeout = self.entry_timeout.get_text()
+        self.grub_timeout = self.entry_timeout.get_text()
         
-        if grub_timeout.isdigit():
-            subprocess.Popen(["sed", "-i", "-r", "s/GRUB_TIMEOUT=[0-9]+/GRUB_TIMEOUT=%s/" % grub_timeout, "/etc/default/grub"])
+        if self.grub_timeout.isdigit():
+            subprocess.Popen(["sed", "-i", "-r", "s/GRUB_TIMEOUT=[0-9]+/GRUB_TIMEOUT=%s/" % self.grub_timeout, "/etc/default/grub"])
             
             subprocess.Popen(["update-grub"])
 
