@@ -33,6 +33,7 @@ class GrubBootManager:
         self.label_version.set_text(self.label_version.get_text() + self.grub_version)
 
         self.treeview = builder.get_object("treeview1")
+        self.treeview.set_headers_visible(False)
         self.treeview.connect("row-activated", self.show_dialog_reboot)
         self.liststore = Gtk.ListStore(str)
         self.treeview.set_model(self.liststore)
