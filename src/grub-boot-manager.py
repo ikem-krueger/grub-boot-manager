@@ -6,6 +6,7 @@ import re
 import os
 import sys
 
+# TODO: this stuff need to go to __init__()
 f = subprocess.check_output(["grub-install", "--version"])
 grub_version = f.split()[-1]
 
@@ -123,9 +124,10 @@ class GrubBootManager:
     def grub_set_timeout(self, *args):
         grub_timeout = self.entry_timeout.get_text()
         
-        subprocess.Popen(["sed", "-i", "-r", "s/GRUB_TIMEOUT=[0-9]+/GRUB_TIMEOUT=%s/" % grub_timeout, "/etc/default/grub"])
-        
-        subprocess.Popen(["update-grub"])
+        if grub_timeout.isdigit():
+            subprocess.Popen(["sed", "-i", "-r", "s/GRUB_TIMEOUT=[0-9]+/GRUB_TIMEOUT=%s/" % grub_timeout, "/etc/default/grub"])
+            
+            subprocess.Popen(["update-grub"])
 
     def show_dialog_reboot(self, *args):
         self.label_reboot.set_text(self.grub_menu_entry)
