@@ -2,7 +2,7 @@
 Name=GRUB Boot Manager
 GenericName=Boot Manager
 Comment=Configure GRUB and choose in what system to reboot
-Exec=/usr/lib/grub-boot-manager/grub-boot-manager.py
+Exec=grub-boot-manager
 Terminal=false
 Type=Application
 StartupNotify=true
