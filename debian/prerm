@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+# Automatically added by dhpython:
+if which pyclean >/dev/null 2>&1; then
+	pyclean -p grub-boot-manager 
+else
+	dpkg -L grub-boot-manager | grep \.py$ | while read file
+	do
+		rm -f "${file}"[co] >/dev/null
+  	done
+fi
+
+# End automatically added section
