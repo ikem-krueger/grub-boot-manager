@@ -21,7 +21,7 @@ class GrubBootManager:
         self.grub_timeout = re.findall("GRUB_TIMEOUT=(.*)", output)[0]
 
         builder = Gtk.Builder()
-        builder.add_from_file("grub-boot-manager.ui")
+        builder.add_from_file("%s/grub-boot-manager.ui" % os.path.dirname(__file__))
 
         self.window = builder.get_object("dialog_main")
         self.window.set_title("GRUB Boot Manager")
