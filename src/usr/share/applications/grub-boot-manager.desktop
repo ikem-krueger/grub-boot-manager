@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=GRUB Boot Manager
+GenericName=Boot Manager
+Comment=Configure GRUB and choose in what system to reboot
+Exec=/usr/lib/grub-boot-manager/grub-boot-manager.py
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=GNOME;GTK;System;
+
