@@ -1,1 +1,2 @@
-- [ ] set timeout
+- [ ] reset timeout on faulty input
+- [ ] add application icon
