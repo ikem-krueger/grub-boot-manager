@@ -1,0 +1,6 @@
+#!/usr/bin/env python2
+
+import os
+
+os.system("/usr/lib/grub-boot-manager/grub-boot-manager.py")
+
