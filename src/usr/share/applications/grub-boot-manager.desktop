@@ -5,6 +5,6 @@ Comment=Configure GRUB and choose in what system to reboot
 Exec=grub-boot-manager
 Terminal=false
 Type=Application
+Icon=grub-boot-manager
+Categories=GTK;System;Settings;
 StartupNotify=true
-Categories=GNOME;GTK;System;
-
