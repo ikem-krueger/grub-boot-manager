@@ -1,2 +1,3 @@
+- [ ] edit like on grub command prompt
 - [ ] reset timeout on faulty input
 - [ ] add application icon
