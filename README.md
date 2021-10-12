@@ -6,7 +6,7 @@ The GRUB Boot Manager is a tool to set the default menu entry and choose in what
 
 | Operating system | Dependencies                                            | Version | License  |
 | :--------------- | :------------------------------------------------------ | :------ | :------  |
-| Linux            | Python 2.x, grub-install, grub-set-default, grub-reboot | 0.9     | AGPL-3.0 |
+| Linux            | Python 2.x, grub-install, grub-set-default, grub-reboot | 0.9.0   | AGPL-3.0 |
 
 ## Installation:
 
